@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>신백현중학교 온라인 교무실</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Noto Sans KR', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+     
+        html, body {
+            background-color: #0f172a !important;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+     
+        body {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            padding: 20px 0;
+            overflow-x: hidden;
+        }
+     
+        .bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 30%, rgba(59, 130, 246, 0.15), rgba(15, 23, 42, 0.8));
+            z-index: 0;
+            pointer-events: none;
+        }
+     
+        header {
+            text-align: center;
+            margin-top: 15px;
+            margin-bottom: 24px;
+            z-index: 1;
+            padding: 0 15px;
+        }
+     
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #60a5fa;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            word-break: keep-all;
+        }
+     
+        header p {
+            font-size: 0.88rem;
+            color: #94a3b8;
+            word-break: keep-all;
+        }
+     
+        main {
+            width: 100%;
+            max-width: 600px;
+            padding: 0 16px;
+            z-index: 1;
+        }
+
+        /* 오늘의 일정 상단 카드 스타일 */
+        .schedule-banner-card {
+            background-color: #1e293b;
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        .schedule-banner-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .schedule-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .schedule-title i {
+            font-size: 1.2rem;
+        }
+
+        .schedule-date {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .schedule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            border-left: 3px solid #f87171;
+            font-size: 0.88rem;
+        }
+
+        .schedule-item .time {
+            color: #f87171;
+            font-weight: 600;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
+        .schedule-item .text {
+            color: #e2e8f0;
+            word-break: keep-all;
+        }
+
+        .notion-link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 10px;
+            background: rgba(248, 113, 113, 0.15);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            border-radius: 10px;
+            color: #fca5a5;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .notion-link-btn:hover {
+            background: rgba(248, 113, 113, 0.25);
+            color: #ffffff;
+        }
+     
+        /* 하단 3개 메뉴 그리드 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            justify-content: center;
+        }
+     
+        .office-card {
+            background-color: #1e293b;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            padding: 22px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #ffffff;
+            box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.4);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+     
+        .office-card:hover {
+            transform: translateY(-4px);
+            background-color: #334155;
+            background: rgba(51, 65, 85, 0.8);
+            border-color: rgba(96, 165, 250, 0.5);
+            box-shadow: 0 15px 25px -8px rgba(59, 130, 246, 0.3);
+        }
+     
+        .office-card:active {
+            transform: scale(0.96);
+            background-color: #334155;
+        }
+     
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+     
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            word-break: keep-all;
+            line-height: 1.3;
+            color: #ffffff;
+        }
+     
+        .c-calendar { color: #f87171; }
+        .c-treasure { color: #facc15; }
+        .c-classroom { color: #2dd4bf; }
+        .c-comtime { color: #38bdf8; }
+     
+        footer {
+            margin-top: 40px;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+            z-index: 1;
+        }
+     
+        @media (max-width: 480px) {
+            header h1 { font-size: 1.5rem; }
+            .grid-container { gap: 10px; }
+            .office-card { padding: 18px 8px; border-radius: 14px; }
+            .icon-box { width: 42px; height: 42px; font-size: 18px; }
+            .card-title { font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+     
+    <div class="bg-overlay"></div>
+     
+    <header>
+        <h1>🏫 신백현중학교 온라인 교무실</h1>
+        <p>원하시는 업무 메뉴를 선택하시면 바로 연결됩니다.</p>
+    </header>
+     
+    <main>
+        <!-- 1. 상단 오늘의 일정 전용 카드 영역 -->
+        <section class="schedule-banner-card">
+            <div class="schedule-banner-header">
+                <div class="schedule-title">
+                    <i class="fa-solid fa-calendar-days c-calendar"></i>
+                    <span>오늘의 학사/교무 일정</span>
+                </div>
+                <span class="schedule-date" id="currentDate">TODAY</span>
+            </div>
+
+            <!-- 일정 항목 노출 영역 -->
+            <div class="schedule-list">
+                <div class="schedule-item">
+                    <span class="time">08:40</span>
+                    <span class="text">전교직원 아침 교직원 회의 (시청각실)</span>
+                </div>
+                <div class="schedule-item">
+                    <span class="time">13:30</span>
+                    <span class="text">2학기 1차 지필평가 출제 원안 제출 마감</span>
+                </div>
+                <div class="schedule-item">
+                    <span class="time">종일</span>
+                    <span class="text">학부모 공개수업 주간 (3일차)</span>
+                </div>
+            </div>
+
+            <!-- 노션 캘린더 전체보기 링크 -->
+            <a href="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="notion-link-btn">
+                <span>노션 캘린더 전체보기</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </section>
+
+        <!-- 2. 하단 3개 주요 서비스 메뉴 그리드 -->
+        <div class="grid-container">
+            <!-- 보물창고 -->
+            <a href="https://docs.google.com/spreadsheets/d/1Q6N_aM4Oy8IAHlOX8BEabyekh6Yho-xalQV8CbwfbkY/edit?gid=1872786866#gid=1872786866" target="_blank" rel="noopener noreferrer" class="office-card">
+                <div class="icon-box c-treasure"><i class="fa-solid fa-box-archive"></i></div>
+                <span class="card-title">보물창고</span>
+            </a>
+     
+            <!-- 구글 클래스룸 -->
+            <a href="https://edu.google.com/intl/ALL_kr/workspace-for-education/products/classroom/" target="_blank" rel="noopener noreferrer" class="office-card">
+                <div class="icon-box c-classroom"><i class="fa-solid fa-chalkboard-user"></i></div>
+                <span class="card-title">구글 클래스룸</span>
+            </a>
+     
+            <!-- 컴시간 알리미 -->
+            <a href="http://xn--s39aqy283b66bj2x.kr/" target="_blank" rel="noopener noreferrer" class="office-card">
+                <div class="icon-box c-comtime"><i class="fa-solid fa-clock"></i></div>
+                <span class="card-title">컴시간 알리미</span>
+            </a>
+        </div>
+    </main>
+     
+    <footer>
+        <p>© 2026 신백현중학교 온라인 교무실 System</p>
+    </footer>
+
+    <script>
+        // 상단 날짜 자동 표시
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const date = String(today.getDate()).padStart(2, '0');
+        const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+        const day = dayNames[today.getDay()];
+        
+        document.getElementById('currentDate').innerText = `${year}.${month}.${date}(${day})`;
+    </script>
+</body>
+</html>
