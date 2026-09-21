@@ -75,7 +75,7 @@
             z-index: 1;
         }
 
-        /* 1. 상단 한 줄 전광판(Ticker) */
+        /* 1. 상단 실시간 자동 연동 전광판 */
         .ticker-card {
             background: rgba(30, 41, 59, 0.85);
             backdrop-filter: blur(12px);
@@ -385,16 +385,14 @@
     </header>
      
     <main>
-        <!-- 상단 한 줄 전광판 -->
+        <!-- 상단 실시간 자동 연동 전광판 -->
         <div class="ticker-card">
             <div class="ticker-badge" id="tickerDateBadge">
                 <i class="fa-solid fa-bullhorn"></i> TODAY
             </div>
             <div class="ticker-wrapper">
-                <div class="ticker-content">
-                    <span class="ticker-item"><span class="time">[08:40]</span> 전교직원 아침 회의 (시청각실)</span>
-                    <span class="ticker-item"><span class="time">[13:30]</span> 2학기 1차 지필평가 출제 원안 제출 마감</span>
-                    <span class="ticker-item"><span class="time">[종일]</span> 학부모 공개수업 주간</span>
+                <div class="ticker-content" id="tickerContainer">
+                    <span class="ticker-item"><span class="time">[안내]</span> 실시간 학사 일정을 불러오는 중입니다...</span>
                 </div>
             </div>
             <div class="ticker-link" onclick="openScheduleModal()">
@@ -405,7 +403,7 @@
 
         <!-- 2x2 메인 메뉴 그리드 -->
         <div class="grid-container">
-            <!-- 1. 오늘의 일정 (클릭 시 개인별/학교 일정 선택 팝업 오픈) -->
+            <!-- 1. 오늘의 일정 (클릭 시 개인별/전체 일정 선택 팝업 오픈) -->
             <div class="office-card" onclick="openScheduleModal()">
                 <div class="icon-box c-calendar"><i class="fa-solid fa-calendar-days"></i></div>
                 <span class="card-title">오늘의 일정<br>(노션 캘린더)</span>
@@ -431,7 +429,7 @@
         </div>
     </main>
 
-    <!-- 개인별 일정 팝업 모달 영역 -->
+    <!-- 개인별 일정 선택 팝업 모달 영역 -->
     <div id="scheduleModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
         <div class="modal-container">
             <div class="modal-header">
@@ -443,20 +441,20 @@
             </div>
             <div class="modal-body">
                 <!-- 전체 학사 일정 -->
-                <a href="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
+                <a href="https://app.notion.com/p/52b930617c3f8217932b81be29401ddb" 
                    target="_blank" rel="noopener noreferrer" class="schedule-btn" onclick="closeScheduleModal()">
                     <div class="schedule-btn-info">
                         <i class="fa-solid fa-calendar-check c-calendar"></i>
                         <div class="schedule-btn-text">
                             <span class="schedule-btn-title">학교 전체 학사 일정</span>
-                            <span class="schedule-btn-sub">신백현중학교 노션 캘린더</span>
+                            <span class="schedule-btn-sub">신백현중학교 노션 메인 캘린더</span>
                         </div>
                     </div>
                     <i class="fa-solid fa-chevron-right" style="color: #64748b;"></i>
                 </a>
 
                 <!-- 개인별 일정 링크 -->
-                <a href="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
+                <a href="https://app.notion.com/p/52b930617c3f8217932b81be29401ddb" 
                    target="_blank" rel="noopener noreferrer" class="schedule-btn" onclick="closeScheduleModal()">
                     <div class="schedule-btn-info">
                         <i class="fa-solid fa-user-clock" style="color: #60a5fa;"></i>
@@ -475,18 +473,44 @@
         <p>© 2026 신백현중학교 온라인 교무실 System</p>
     </footer>
 
-    <!-- 자바스크립트 스크립트 -->
+    <!-- 자바스크립트 연동 코드 -->
     <script>
-        // 오늘 날짜 계산하여 전광판 뱃지 표시
-        const today = new Date();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const date = String(today.getDate()).padStart(2, '0');
-        const badgeEl = document.getElementById('tickerDateBadge');
-        if (badgeEl) {
-            badgeEl.innerHTML = `<i class="fa-solid fa-bullhorn"></i> ${month}/${date}`;
+        // Vercel에서 발급받은 실시간 API 주소
+        const VERCEL_API_URL = "https://test1-eh7j.vercel.app/api/schedule";
+
+        async function fetchNotionSchedule() {
+            const container = document.getElementById('tickerContainer');
+            const badgeEl = document.getElementById('tickerDateBadge');
+
+            const today = new Date();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const date = String(today.getDate()).padStart(2, '0');
+            if (badgeEl) {
+                badgeEl.innerHTML = `<i class="fa-solid fa-bullhorn"></i> ${month}/${date}`;
+            }
+
+            try {
+                const response = await fetch(VERCEL_API_URL);
+                const data = await response.json();
+
+                if (data.success && data.schedules.length > 0) {
+                    container.innerHTML = data.schedules.map(item => 
+                        `<span class="ticker-item"><span class="time">[${item.time}]</span> ${item.text}</span>`
+                    ).join('');
+                } else {
+                    container.innerHTML = `
+                        <span class="ticker-item"><span class="time">[학사일정]</span> 오늘 등록된 주요 학사일정이 없습니다.</span>
+                        <span class="ticker-item"><span class="time">[안내]</span> 카드를 누르면 전체 캘린더 팝업이 연결됩니다.</span>
+                    `;
+                }
+            } catch (error) {
+                console.error("노션 일정 불러오기 오류:", error);
+                container.innerHTML = `
+                    <span class="ticker-item"><span class="time">[학사일정]</span> 오늘 등록된 주요 학사일정이 없습니다.</span>
+                `;
+            }
         }
 
-        // 팝업 제어 함수
         function openScheduleModal() {
             document.getElementById('scheduleModal').classList.add('active');
         }
@@ -500,6 +524,8 @@
                 closeScheduleModal();
             }
         }
+
+        document.addEventListener('DOMContentLoaded', fetchNotionSchedule);
     </script>
 </body>
 </html>
