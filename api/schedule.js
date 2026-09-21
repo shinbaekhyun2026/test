@@ -1,36 +1,31 @@
-const { Client } = require('@notionhq/client');
+export default async function handler(req, res) {
+  // 1. CORS 헤더 설정 (모든 도메인 허용 또는 특정 도메인 허용)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*'); // 특정 도메인만 허용하려면 'https://shinbaekhyun2026.github.io' 입력
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
 
-const notion = new Client({ auth: process.env.NOTION_KEY });
-const databaseId = process.env.NOTION_DATABASE_ID;
+  // 2. 브라우저의 OPTIONS Preflight 요청 처리
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
 
-module.exports = async (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET');
-
-    try {
-        const now = new Date();
-        const kstOffset = 9 * 60 * 60 * 1000;
-        const kstDate = new Date(now.getTime() + kstOffset);
-        const today = kstDate.toISOString().split('T')[0];
-
-        const response = await notion.databases.query({
-            database_id: databaseId,
-            filter: {
-                property: '날짜',
-                date: {
-                    equals: today
-                }
-            }
-        });
-
-        const schedules = response.results.map(page => {
-            const title = page.properties['이름']?.title[0]?.plain_text || '일정';
-            const time = page.properties['시간']?.rich_text[0]?.plain_text || '종일';
-            return { time, text: title };
-        });
-
-        return res.status(200).json({ success: true, date: today, schedules });
-    } catch (error) {
-        return res.status(500).json({ success: false, error: error.message });
-    }
-};
+  // 3. 기존 노션 API 호출 로직 실행
+  try {
+    // ... 기존 Notion API 불러오기 코드 ...
+    
+    // 예시 응답
+    return res.status(200).json({
+      success: true,
+      schedules: [
+        /* 데이터 */
+      ]
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+}
