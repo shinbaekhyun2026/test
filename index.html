@@ -75,7 +75,7 @@
             z-index: 1;
         }
 
-        /* 한 줄 전광판(Ticker) 스타일 */
+        /* 1. 상단 한 줄 전광판(Ticker) */
         .ticker-card {
             background: rgba(30, 41, 59, 0.85);
             backdrop-filter: blur(12px);
@@ -158,7 +158,6 @@
             flex-shrink: 0;
             transition: all 0.2s ease;
             white-space: nowrap;
-            cursor: pointer;
         }
 
         .ticker-link:hover {
@@ -166,7 +165,7 @@
             color: #ffffff;
         }
 
-        /* 2x2 메인 메뉴 그리드 */
+        /* 2. 메인 2x2 그리드 카드 */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -191,7 +190,6 @@
             color: #ffffff;
             box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.4);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
         }
      
         .office-card:hover {
@@ -233,130 +231,6 @@
         .c-classroom { color: #2dd4bf; }
         .c-comtime { color: #38bdf8; }
 
-        /* 개인별 일정 팝업 모달 스타일 */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 100;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.25s ease;
-            padding: 16px;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-container {
-            background: #1e293b;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            width: 100%;
-            max-width: 460px;
-            padding: 24px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-            transform: scale(0.92);
-            transition: transform 0.25s ease;
-        }
-
-        .modal-overlay.active .modal-container {
-            transform: scale(1);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 12px;
-        }
-
-        .modal-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #60a5fa;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal-close {
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 0 4px;
-            transition: color 0.2s;
-        }
-
-        .modal-close:hover {
-            color: #ffffff;
-        }
-
-        .modal-body {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .schedule-btn {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            color: #ffffff;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .schedule-btn:hover {
-            background: rgba(59, 130, 246, 0.2);
-            border-color: rgba(96, 165, 250, 0.5);
-            transform: translateX(4px);
-        }
-
-        .schedule-btn-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .schedule-btn-info i {
-            font-size: 1.2rem;
-        }
-
-        .schedule-btn-text {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .schedule-btn-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-        }
-
-        .schedule-btn-sub {
-            font-size: 0.8rem;
-            color: #94a3b8;
-        }
-     
         footer {
             margin-top: 40px;
             padding: 15px;
@@ -385,161 +259,103 @@
     </header>
      
     <main>
-        <!-- 상단 한 줄 흐르는 전광판 -->
+        <!-- 한 줄 전광판 -->
         <div class="ticker-card">
             <div class="ticker-badge" id="tickerDateBadge">
                 <i class="fa-solid fa-bullhorn"></i> TODAY
             </div>
             <div class="ticker-wrapper">
                 <div class="ticker-content" id="tickerContainer">
-                    <!-- 자바스크립트 스크립트에서 자동 생성 -->
+                    <!-- 오늘의 학교 캘린더 일정 자바스크립트 자동 삽입 -->
                 </div>
             </div>
-            <div class="ticker-link" onclick="openScheduleModal()">
-                <span>팝업</span>
-                <i class="fa-solid fa-window-restore"></i>
-            </div>
+            <a href="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
+               target="_blank" rel="noopener noreferrer" class="ticker-link">
+                <span>캘린더</span>
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
         </div>
 
         <!-- 2x2 메인 메뉴 그리드 -->
         <div class="grid-container">
-            <!-- 1. 오늘의 일정 (클릭 시 팝업) -->
-            <div class="office-card" onclick="openScheduleModal()">
+            <!-- 1. 오늘의 일정 (클릭 시 학교 노션 캘린더 바로가기) -->
+            <a href="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
+               target="_blank" rel="noopener noreferrer" class="office-card">
                 <div class="icon-box c-calendar"><i class="fa-solid fa-calendar-days"></i></div>
-                <span class="card-title">오늘의 일정<br>(노션 캘린더)</span>
-            </div>
+                <span class="card-title">오늘의 일정<br>(학교 캘린더)</span>
+            </a>
      
             <!-- 2. 보물창고 -->
-            <a href="https://docs.google.com/spreadsheets/d/1Q6N_aM4Oy8IAHlOX8BEabyekh6Yho-xalQV8CbwfbkY/edit?gid=1872786866#gid=1872786866" target="_blank" rel="noopener noreferrer" class="office-card">
+            <a href="https://docs.google.com/spreadsheets/d/1Q6N_aM4Oy8IAHlOX8BEabyekh6Yho-xalQV8CbwfbkY/edit?gid=1872786866#gid=1872786866" 
+               target="_blank" rel="noopener noreferrer" class="office-card">
                 <div class="icon-box c-treasure"><i class="fa-solid fa-box-archive"></i></div>
                 <span class="card-title">보물창고</span>
             </a>
      
             <!-- 3. 구글 클래스룸 -->
-            <a href="https://edu.google.com/intl/ALL_kr/workspace-for-education/products/classroom/" target="_blank" rel="noopener noreferrer" class="office-card">
+            <a href="https://edu.google.com/intl/ALL_kr/workspace-for-education/products/classroom/" 
+               target="_blank" rel="noopener noreferrer" class="office-card">
                 <div class="icon-box c-classroom"><i class="fa-solid fa-chalkboard-user"></i></div>
                 <span class="card-title">구글 클래스룸</span>
             </a>
      
             <!-- 4. 컴시간 알리미 -->
-            <a href="http://xn--s39aqy283b66bj2x.kr/" target="_blank" rel="noopener noreferrer" class="office-card">
+            <a href="http://xn--s39aqy283b66bj2x.kr/" 
+               target="_blank" rel="noopener noreferrer" class="office-card">
                 <div class="icon-box c-comtime"><i class="fa-solid fa-clock"></i></div>
                 <span class="card-title">컴시간 알리미</span>
             </a>
         </div>
     </main>
-
-    <!-- 개인별 일정 팝업 모달 영역 -->
-    <div id="scheduleModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
-        <div class="modal-container">
-            <div class="modal-header">
-                <div class="modal-title">
-                    <i class="fa-solid fa-calendar-days c-calendar"></i>
-                    <span>일정 바로가기 선택</span>
-                </div>
-                <button class="modal-close" onclick="closeScheduleModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <!-- 전체 학사 일정 -->
-                <a href="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
-                   target="_blank" rel="noopener noreferrer" class="schedule-btn" onclick="closeScheduleModal()">
-                    <div class="schedule-btn-info">
-                        <i class="fa-solid fa-calendar-check c-calendar"></i>
-                        <div class="schedule-btn-text">
-                            <span class="schedule-btn-title">학교 전체 학사 일정</span>
-                            <span class="schedule-btn-sub">신백현중학교 노션 캘린더</span>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right" style="color: #64748b;"></i>
-                </a>
-
-                <!-- 개인별 일정 링크 -->
-                <a href="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
-                   target="_blank" rel="noopener noreferrer" class="schedule-btn" onclick="closeScheduleModal()">
-                    <div class="schedule-btn-info">
-                        <i class="fa-solid fa-user-clock" style="color: #60a5fa;"></i>
-                        <div class="schedule-btn-text">
-                            <span class="schedule-btn-title">개인별 일정 확인</span>
-                            <span class="schedule-btn-sub">개인 시간표 및 맞춤 업무 일정</span>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right" style="color: #64748b;"></i>
-                </a>
-            </div>
-        </div>
-    </div>
      
     <footer>
         <p>© 2026 신백현중학교 온라인 교무실 System</p>
     </footer>
 
-    <!-- 자바스크립트 일정 관리 스크립트 -->
+    <!-- 학교 캘린더 전광판 자동화 자바스크립트 -->
     <script>
-        // 날짜별 일정 목록 (YYYY-MM-DD 형식)
-        // 여기에 원하는 날짜와 일정을 추가/수정하시면 해당 날짜에 자동으로 뜹니다.
-        const scheduleList = {
+        // 학교 캘린더 주요 학사일정 데이터베이스 (YYYY-MM-DD)
+        const schoolCalendarEvents = {
             "2026-09-21": [
                 { time: "08:40", text: "신백현중 아침 교직원 회의 (시청각실)" },
                 { time: "13:30", text: "2학기 1차 지필평가 출제 원안 제출 마감" },
                 { time: "종일", text: "학부모 공개수업 주간" }
             ],
             "2026-09-22": [
-                { time: "10:00", text: "교직원 수능/평가원 대비 연수 (컴퓨터실)" },
+                { time: "10:00", text: "교직원 평가 대비 연수" },
                 { time: "종일", text: "학부모 공개수업 주간 (2일차)" }
-            ],
-            "2026-09-23": [
-                { time: "15:00", text: "부서별 교직원 장학 협의회" }
             ]
         };
 
-        // 접속일 자동 계산 및 전광판 로딩
-        function loadTodaySchedule() {
+        function initCalendarTicker() {
             const today = new Date();
             const year = today.getFullYear();
             const month = String(today.getMonth() + 1).padStart(2, '0');
             const date = String(today.getDate()).padStart(2, '0');
             const todayKey = `${year}-${month}-${date}`;
 
-            // 전광판 좌측 뱃지 날짜 업데이트 (월/일)
+            // 좌측 뱃지 날짜 자동 업데이트
             const badgeEl = document.getElementById('tickerDateBadge');
             if (badgeEl) {
                 badgeEl.innerHTML = `<i class="fa-solid fa-bullhorn"></i> ${month}/${date}`;
             }
 
             const container = document.getElementById('tickerContainer');
-            const currentSchedule = scheduleList[todayKey];
+            const events = schoolCalendarEvents[todayKey];
 
-            if (currentSchedule && currentSchedule.length > 0) {
-                // 당일 등록된 일정이 있을 때
-                container.innerHTML = currentSchedule.map(item => 
+            if (events && events.length > 0) {
+                container.innerHTML = events.map(item => 
                     `<span class="ticker-item"><span class="time">[${item.time}]</span> ${item.text}</span>`
                 ).join('');
             } else {
-                // 지정한 날짜 일정이 없을 때 기본 문구
                 container.innerHTML = `
-                    <span class="ticker-item"><span class="time">[오늘의 일정]</span> 신백현중학교 노션 캘린더에서 전체 일정을 확인하세요.</span>
-                    <span class="ticker-item"><span class="time">[안내]</span> 카드 메뉴 클릭 시 상세 팝업이 표시됩니다.</span>
+                    <span class="ticker-item"><span class="time">[학교 캘린더]</span> 오늘 등록된 주요 학사일정이 없습니다.</span>
+                    <span class="ticker-item"><span class="time">[안내]</span> '오늘의 일정' 카드를 누르시면 전체 노션 캘린더로 연결됩니다.</span>
                 `;
             }
         }
 
-        // 팝업 제어 함수
-        function openScheduleModal() {
-            document.getElementById('scheduleModal').classList.add('active');
-        }
-
-        function closeScheduleModal() {
-            document.getElementById('scheduleModal').classList.remove('active');
-        }
-
-        function closeModalOnOverlay(event) {
-            if (event.target === document.getElementById('scheduleModal')) {
-                closeScheduleModal();
-            }
-        }
-
-        // 페이지 진입 시 실행
-        document.addEventListener('DOMContentLoaded', loadTodaySchedule);
+        document.addEventListener('DOMContentLoaded', initCalendarTicker);
     </script>
 </body>
 </html>
