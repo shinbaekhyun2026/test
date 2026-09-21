@@ -403,7 +403,7 @@
 
         <!-- 2x2 메인 메뉴 그리드 -->
         <div class="grid-container">
-            <!-- 1. 오늘의 일정 (클릭 시 개인별/전체 일정 선택 팝업 오픈) -->
+            <!-- 1. 오늘의 일정 (클릭 시 팝업 모달) -->
             <div class="office-card" onclick="openScheduleModal()">
                 <div class="icon-box c-calendar"><i class="fa-solid fa-calendar-days"></i></div>
                 <span class="card-title">오늘의 일정<br>(노션 캘린더)</span>
@@ -429,7 +429,7 @@
         </div>
     </main>
 
-    <!-- 개인별 일정 선택 팝업 모달 영역 -->
+    <!-- 개인별 일정 선택 팝업 모달 -->
     <div id="scheduleModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
         <div class="modal-container">
             <div class="modal-header">
@@ -453,7 +453,7 @@
                     <i class="fa-solid fa-chevron-right" style="color: #64748b;"></i>
                 </a>
 
-                <!-- 개인별 일정 링크 -->
+                <!-- 개인별 일정 -->
                 <a href="https://app.notion.com/p/52b930617c3f8217932b81be29401ddb" 
                    target="_blank" rel="noopener noreferrer" class="schedule-btn" onclick="closeScheduleModal()">
                     <div class="schedule-btn-info">
@@ -473,9 +473,7 @@
         <p>© 2026 신백현중학교 온라인 교무실 System</p>
     </footer>
 
-    <!-- 자바스크립트 연동 코드 -->
     <script>
-        // Vercel에서 발급받은 실시간 API 주소
         const VERCEL_API_URL = "https://test1-eh7j.vercel.app/api/schedule";
 
         async function fetchNotionSchedule() {
