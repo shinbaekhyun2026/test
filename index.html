@@ -75,7 +75,7 @@
             z-index: 1;
         }
 
-        /* 1. 한 줄 전광판(Ticker) 스타일 */
+        /* 한 줄 전광판(Ticker) 스타일 */
         .ticker-card {
             background: rgba(30, 41, 59, 0.85);
             backdrop-filter: blur(12px);
@@ -125,7 +125,7 @@
         }
 
         .ticker-card:hover .ticker-content {
-            animation-play-state: paused; /* 마우스 올려두면 일시정지 */
+            animation-play-state: paused;
         }
 
         .ticker-item {
@@ -166,7 +166,7 @@
             color: #ffffff;
         }
 
-        /* 2. 2x2 메인 메뉴 그리드 */
+        /* 2x2 메인 메뉴 그리드 */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -233,7 +233,7 @@
         .c-classroom { color: #2dd4bf; }
         .c-comtime { color: #38bdf8; }
 
-        /* 3. 개인별 일정 팝업 모달 스타일 */
+        /* 개인별 일정 팝업 모달 스타일 */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -392,7 +392,7 @@
             </div>
             <div class="ticker-wrapper">
                 <div class="ticker-content" id="tickerContainer">
-                    <!-- 자바스크립트에 의해 오늘 날짜 일정이 자동으로 흘러나옵니다 -->
+                    <!-- 자바스크립트 스크립트에서 자동 생성 -->
                 </div>
             </div>
             <div class="ticker-link" onclick="openScheduleModal()">
@@ -475,21 +475,24 @@
 
     <!-- 자바스크립트 일정 관리 스크립트 -->
     <script>
-        // 1. 날짜별 일정 데이터 등록 (YYYY-MM-DD 형식)
-        // 향후 일정이 생기시면 아래 객체에 날짜와 일정을 추가해 주시면 됩니다.
+        // 날짜별 일정 목록 (YYYY-MM-DD 형식)
+        // 여기에 원하는 날짜와 일정을 추가/수정하시면 해당 날짜에 자동으로 뜹니다.
         const scheduleList = {
             "2026-09-21": [
-                { time: "08:40", text: "전교직원 아침 회의 (시청각실)" },
+                { time: "08:40", text: "신백현중 아침 교직원 회의 (시청각실)" },
                 { time: "13:30", text: "2학기 1차 지필평가 출제 원안 제출 마감" },
                 { time: "종일", text: "학부모 공개수업 주간" }
             ],
             "2026-09-22": [
                 { time: "10:00", text: "교직원 수능/평가원 대비 연수 (컴퓨터실)" },
                 { time: "종일", text: "학부모 공개수업 주간 (2일차)" }
+            ],
+            "2026-09-23": [
+                { time: "15:00", text: "부서별 교직원 장학 협의회" }
             ]
         };
 
-        // 2. 오늘 날짜 감지 및 전광판 로딩
+        // 접속일 자동 계산 및 전광판 로딩
         function loadTodaySchedule() {
             const today = new Date();
             const year = today.getFullYear();
@@ -497,7 +500,7 @@
             const date = String(today.getDate()).padStart(2, '0');
             const todayKey = `${year}-${month}-${date}`;
 
-            // 전광판 왼쪽 날짜 뱃지 업데이트
+            // 전광판 좌측 뱃지 날짜 업데이트 (월/일)
             const badgeEl = document.getElementById('tickerDateBadge');
             if (badgeEl) {
                 badgeEl.innerHTML = `<i class="fa-solid fa-bullhorn"></i> ${month}/${date}`;
@@ -507,12 +510,12 @@
             const currentSchedule = scheduleList[todayKey];
 
             if (currentSchedule && currentSchedule.length > 0) {
-                // 오늘 등록된 일정이 있는 경우
+                // 당일 등록된 일정이 있을 때
                 container.innerHTML = currentSchedule.map(item => 
                     `<span class="ticker-item"><span class="time">[${item.time}]</span> ${item.text}</span>`
                 ).join('');
             } else {
-                // 지정된 날짜 일정이 없는 경우 기본 안내 문구가 흐릅니다.
+                // 지정한 날짜 일정이 없을 때 기본 문구
                 container.innerHTML = `
                     <span class="ticker-item"><span class="time">[오늘의 일정]</span> 신백현중학교 노션 캘린더에서 전체 일정을 확인하세요.</span>
                     <span class="ticker-item"><span class="time">[안내]</span> 카드 메뉴 클릭 시 상세 팝업이 표시됩니다.</span>
@@ -535,8 +538,8 @@
             }
         }
 
-        // 페이지 로드 시 일정 실행
-        window.onload = loadTodaySchedule;
+        // 페이지 진입 시 실행
+        document.addEventListener('DOMContentLoaded', loadTodaySchedule);
     </script>
 </body>
 </html>
