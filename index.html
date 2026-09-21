@@ -271,7 +271,7 @@
                     <span class="ticker-item"><span class="time">[안내]</span> 실시간 학사 일정을 불러오는 중입니다...</span>
                 </div>
             </div>
-            <!-- 전광판 '이동' 버튼 (요청하신 지정 노션 페이지 링크 바로가기) -->
+            <!-- 전광판 '이동' 버튼 -->
             <a href="https://app.notion.com/p/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf" target="_blank" rel="noopener noreferrer" class="ticker-link">
                 <span>이동</span>
                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -280,7 +280,7 @@
 
         <!-- 2x2 메인 메뉴 그리드 -->
         <div class="grid-container">
-            <!-- 1. 오늘의 일정 (클릭 시 지정된 노션 페이지로 바로 이동) -->
+            <!-- 1. 오늘의 일정 -->
             <a href="https://app.notion.com/p/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf" target="_blank" rel="noopener noreferrer" class="office-card">
                 <div class="icon-box c-calendar"><i class="fa-solid fa-calendar-days"></i></div>
                 <span class="card-title">오늘의 일정<br>(노션 캘린더)</span>
@@ -325,13 +325,25 @@
             }
 
             try {
+                console.log("Fetching schedule from:", VERCEL_API_URL);
                 const response = await fetch(VERCEL_API_URL);
-                const data = await response.json();
 
-                if (data.success && data.schedules.length > 0) {
-                    container.innerHTML = data.schedules.map(item => 
-                        `<span class="ticker-item"><span class="time">[${item.time}]</span> ${item.text}</span>`
-                    ).join('');
+                if (!response.ok) {
+                    throw new Error(`HTTP 에러 발생! 상태 코드: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("Vercel API 응답 데이터:", data);
+
+                // 응답 배열 추출 (data.schedules 또는 data 자체/data.data 고려)
+                const schedules = data.schedules || data.data || (Array.isArray(data) ? data : []);
+
+                if (Array.isArray(schedules) && schedules.length > 0) {
+                    container.innerHTML = schedules.map(item => {
+                        const time = item.time || item.date || '학사일정';
+                        const text = item.text || item.title || item.name || JSON.stringify(item);
+                        return `<span class="ticker-item"><span class="time">[${time}]</span> ${text}</span>`;
+                    }).join('');
                 } else {
                     container.innerHTML = `
                         <span class="ticker-item"><span class="time">[학사일정]</span> 오늘 등록된 주요 학사일정이 없습니다.</span>
@@ -339,9 +351,9 @@
                     `;
                 }
             } catch (error) {
-                console.error("노션 일정 불러오기 오류:", error);
+                console.error("노션 일정 불러오기 오류 상세:", error);
                 container.innerHTML = `
-                    <span class="ticker-item"><span class="time">[학사일정]</span> 오늘 등록된 주요 학사일정이 없습니다.</span>
+                    <span class="ticker-item"><span class="time">[안내]</span> 일정을 불러오는 중 연결 오류가 발생했습니다. (개발자 도구 콘솔 확인)</span>
                 `;
             }
         }
