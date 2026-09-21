@@ -125,7 +125,7 @@
         }
 
         .ticker-card:hover .ticker-content {
-            animation-play-state: paused; /* 마우스 올리면 일시정지 */
+            animation-play-state: paused; /* 마우스 올려두면 일시정지 */
         }
 
         .ticker-item {
@@ -387,14 +387,12 @@
     <main>
         <!-- 상단 한 줄 흐르는 전광판 -->
         <div class="ticker-card">
-            <div class="ticker-badge">
-                <i class="fa-solid fa-bullhorn"></i> 일정
+            <div class="ticker-badge" id="tickerDateBadge">
+                <i class="fa-solid fa-bullhorn"></i> TODAY
             </div>
             <div class="ticker-wrapper">
-                <div class="ticker-content">
-                    <span class="ticker-item"><span class="time">[08:40]</span> 전교직원 아침 회의 (시청각실)</span>
-                    <span class="ticker-item"><span class="time">[13:30]</span> 2학기 1차 지필평가 출제 원안 제출 마감</span>
-                    <span class="ticker-item"><span class="time">[종일]</span> 학부모 공개수업 주간</span>
+                <div class="ticker-content" id="tickerContainer">
+                    <!-- 자바스크립트에 의해 오늘 날짜 일정이 자동으로 흘러나옵니다 -->
                 </div>
             </div>
             <div class="ticker-link" onclick="openScheduleModal()">
@@ -405,7 +403,7 @@
 
         <!-- 2x2 메인 메뉴 그리드 -->
         <div class="grid-container">
-            <!-- 1. 오늘의 일정 (클릭 시 팝업 뜨게 하기) -->
+            <!-- 1. 오늘의 일정 (클릭 시 팝업) -->
             <div class="office-card" onclick="openScheduleModal()">
                 <div class="icon-box c-calendar"><i class="fa-solid fa-calendar-days"></i></div>
                 <span class="card-title">오늘의 일정<br>(노션 캘린더)</span>
@@ -455,7 +453,7 @@
                     <i class="fa-solid fa-chevron-right" style="color: #64748b;"></i>
                 </a>
 
-                <!-- 개인별 일정 링크 (필요 시 주소 변경) -->
+                <!-- 개인별 일정 링크 -->
                 <a href="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
                    target="_blank" rel="noopener noreferrer" class="schedule-btn" onclick="closeScheduleModal()">
                     <div class="schedule-btn-info">
@@ -475,8 +473,54 @@
         <p>© 2026 신백현중학교 온라인 교무실 System</p>
     </footer>
 
-    <!-- 팝업 제어 자바스크립트 -->
+    <!-- 자바스크립트 일정 관리 스크립트 -->
     <script>
+        // 1. 날짜별 일정 데이터 등록 (YYYY-MM-DD 형식)
+        // 향후 일정이 생기시면 아래 객체에 날짜와 일정을 추가해 주시면 됩니다.
+        const scheduleList = {
+            "2026-09-21": [
+                { time: "08:40", text: "전교직원 아침 회의 (시청각실)" },
+                { time: "13:30", text: "2학기 1차 지필평가 출제 원안 제출 마감" },
+                { time: "종일", text: "학부모 공개수업 주간" }
+            ],
+            "2026-09-22": [
+                { time: "10:00", text: "교직원 수능/평가원 대비 연수 (컴퓨터실)" },
+                { time: "종일", text: "학부모 공개수업 주간 (2일차)" }
+            ]
+        };
+
+        // 2. 오늘 날짜 감지 및 전광판 로딩
+        function loadTodaySchedule() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const date = String(today.getDate()).padStart(2, '0');
+            const todayKey = `${year}-${month}-${date}`;
+
+            // 전광판 왼쪽 날짜 뱃지 업데이트
+            const badgeEl = document.getElementById('tickerDateBadge');
+            if (badgeEl) {
+                badgeEl.innerHTML = `<i class="fa-solid fa-bullhorn"></i> ${month}/${date}`;
+            }
+
+            const container = document.getElementById('tickerContainer');
+            const currentSchedule = scheduleList[todayKey];
+
+            if (currentSchedule && currentSchedule.length > 0) {
+                // 오늘 등록된 일정이 있는 경우
+                container.innerHTML = currentSchedule.map(item => 
+                    `<span class="ticker-item"><span class="time">[${item.time}]</span> ${item.text}</span>`
+                ).join('');
+            } else {
+                // 지정된 날짜 일정이 없는 경우 기본 안내 문구가 흐릅니다.
+                container.innerHTML = `
+                    <span class="ticker-item"><span class="time">[오늘의 일정]</span> 신백현중학교 노션 캘린더에서 전체 일정을 확인하세요.</span>
+                    <span class="ticker-item"><span class="time">[안내]</span> 카드 메뉴 클릭 시 상세 팝업이 표시됩니다.</span>
+                `;
+            }
+        }
+
+        // 팝업 제어 함수
         function openScheduleModal() {
             document.getElementById('scheduleModal').classList.add('active');
         }
@@ -490,6 +534,9 @@
                 closeScheduleModal();
             }
         }
+
+        // 페이지 로드 시 일정 실행
+        window.onload = loadTodaySchedule;
     </script>
 </body>
 </html>
