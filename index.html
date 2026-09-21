@@ -75,69 +75,98 @@
             z-index: 1;
         }
 
-        /* 3번 방식: 노션 캘린더 실시간 임베드 프레임 박스 */
-        .notion-embed-card {
+        /* 1. 상단 한 줄 전광판(Ticker) */
+        .ticker-card {
             background: rgba(30, 41, 59, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(248, 113, 113, 0.35);
-            border-radius: 16px;
-            padding: 14px;
+            border-radius: 14px;
+            padding: 12px 16px;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
         }
 
-        .notion-embed-header {
+        .ticker-badge {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .notion-embed-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.92rem;
-            font-weight: 700;
+            gap: 6px;
+            background: rgba(248, 113, 113, 0.15);
+            border: 1px solid rgba(248, 113, 113, 0.3);
             color: #fca5a5;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 8px;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
-        .notion-embed-link {
+        .ticker-wrapper {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+        }
+
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%;
+            animation: ticker 20s linear infinite;
+            font-size: 0.88rem;
+            color: #e2e8f0;
+        }
+
+        .ticker-card:hover .ticker-content {
+            animation-play-state: paused;
+        }
+
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-right: 36px;
+        }
+
+        .ticker-item .time {
+            color: #f87171;
+            font-weight: 700;
+        }
+
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        .ticker-link {
             color: #94a3b8;
-            font-size: 0.78rem;
+            font-size: 0.8rem;
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 3px 8px;
+            padding: 4px 8px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 6px;
+            flex-shrink: 0;
             transition: all 0.2s ease;
+            white-space: nowrap;
+            cursor: pointer;
         }
 
-        .notion-embed-link:hover {
+        .ticker-link:hover {
             background: rgba(248, 113, 113, 0.2);
             color: #ffffff;
         }
 
-        .notion-frame-wrapper {
-            width: 100%;
-            height: 280px; /* 높이 조절 가능 */
-            border-radius: 10px;
-            overflow: hidden;
-            background: #ffffff;
-        }
-
-        .notion-frame-wrapper iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* 메인 2x2 그리드 카드 */
+        /* 2. 2x2 메인 메뉴 그리드 */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -162,6 +191,7 @@
             color: #ffffff;
             box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.4);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
         }
      
         .office-card:hover {
@@ -203,6 +233,130 @@
         .c-classroom { color: #2dd4bf; }
         .c-comtime { color: #38bdf8; }
 
+        /* 3. 개인별 일정 팝업 모달 스타일 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+            padding: 16px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-container {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 460px;
+            padding: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            transform: scale(0.92);
+            transition: transform 0.25s ease;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 12px;
+        }
+
+        .modal-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0 4px;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #ffffff;
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .schedule-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .schedule-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(96, 165, 250, 0.5);
+            transform: translateX(4px);
+        }
+
+        .schedule-btn-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .schedule-btn-info i {
+            font-size: 1.2rem;
+        }
+
+        .schedule-btn-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .schedule-btn-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .schedule-btn-sub {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+     
         footer {
             margin-top: 40px;
             padding: 15px;
@@ -218,7 +372,6 @@
             .office-card { padding: 22px 12px; border-radius: 16px; }
             .icon-box { width: 48px; height: 48px; font-size: 22px; }
             .card-title { font-size: 14px; }
-            .notion-frame-wrapper { height: 240px; }
         }
     </style>
 </head>
@@ -232,64 +385,121 @@
     </header>
      
     <main>
-        <!-- 3번 방식: 노션 캘린더 실시간 임베드 박스 -->
-        <section class="notion-embed-card">
-            <div class="notion-embed-header">
-                <div class="notion-embed-title">
-                    <i class="fa-solid fa-calendar-days c-calendar"></i>
-                    <span>실시간 학교 캘린더</span>
+        <!-- 상단 한 줄 전광판 -->
+        <div class="ticker-card">
+            <div class="ticker-badge" id="tickerDateBadge">
+                <i class="fa-solid fa-bullhorn"></i> TODAY
+            </div>
+            <div class="ticker-wrapper">
+                <div class="ticker-content">
+                    <span class="ticker-item"><span class="time">[08:40]</span> 전교직원 아침 회의 (시청각실)</span>
+                    <span class="ticker-item"><span class="time">[13:30]</span> 2학기 1차 지필평가 출제 원안 제출 마감</span>
+                    <span class="ticker-item"><span class="time">[종일]</span> 학부모 공개수업 주간</span>
                 </div>
-                <a href="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
-                   target="_blank" rel="noopener noreferrer" class="notion-embed-link">
-                    <span>전체화면</span>
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                </a>
             </div>
-
-            <!-- 노션 캘린더 프레임 -->
-            <div class="notion-frame-wrapper">
-                <iframe src="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
-                        loading="lazy" 
-                        title="신백현중학교 노션 캘린더">
-                </iframe>
+            <div class="ticker-link" onclick="openScheduleModal()">
+                <span>팝업</span>
+                <i class="fa-solid fa-window-restore"></i>
             </div>
-        </section>
+        </div>
 
         <!-- 2x2 메인 메뉴 그리드 -->
         <div class="grid-container">
-            <!-- 1. 오늘의 일정 (학교 노션 캘린더 바로가기) -->
-            <a href="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
-               target="_blank" rel="noopener noreferrer" class="office-card">
+            <!-- 1. 오늘의 일정 (클릭 시 개인별/학교 일정 선택 팝업 오픈) -->
+            <div class="office-card" onclick="openScheduleModal()">
                 <div class="icon-box c-calendar"><i class="fa-solid fa-calendar-days"></i></div>
-                <span class="card-title">오늘의 일정<br>(학교 캘린더)</span>
-            </a>
+                <span class="card-title">오늘의 일정<br>(노션 캘린더)</span>
+            </div>
      
             <!-- 2. 보물창고 -->
-            <a href="https://docs.google.com/spreadsheets/d/1Q6N_aM4Oy8IAHlOX8BEabyekh6Yho-xalQV8CbwfbkY/edit?gid=1872786866#gid=1872786866" 
-               target="_blank" rel="noopener noreferrer" class="office-card">
+            <a href="https://docs.google.com/spreadsheets/d/1Q6N_aM4Oy8IAHlOX8BEabyekh6Yho-xalQV8CbwfbkY/edit?gid=1872786866#gid=1872786866" target="_blank" rel="noopener noreferrer" class="office-card">
                 <div class="icon-box c-treasure"><i class="fa-solid fa-box-archive"></i></div>
                 <span class="card-title">보물창고</span>
             </a>
      
             <!-- 3. 구글 클래스룸 -->
-            <a href="https://edu.google.com/intl/ALL_kr/workspace-for-education/products/classroom/" 
-               target="_blank" rel="noopener noreferrer" class="office-card">
+            <a href="https://edu.google.com/intl/ALL_kr/workspace-for-education/products/classroom/" target="_blank" rel="noopener noreferrer" class="office-card">
                 <div class="icon-box c-classroom"><i class="fa-solid fa-chalkboard-user"></i></div>
                 <span class="card-title">구글 클래스룸</span>
             </a>
      
             <!-- 4. 컴시간 알리미 -->
-            <a href="http://xn--s39aqy283b66bj2x.kr/" 
-               target="_blank" rel="noopener noreferrer" class="office-card">
+            <a href="http://xn--s39aqy283b66bj2x.kr/" target="_blank" rel="noopener noreferrer" class="office-card">
                 <div class="icon-box c-comtime"><i class="fa-solid fa-clock"></i></div>
                 <span class="card-title">컴시간 알리미</span>
             </a>
         </div>
     </main>
+
+    <!-- 개인별 일정 팝업 모달 영역 -->
+    <div id="scheduleModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fa-solid fa-calendar-days c-calendar"></i>
+                    <span>일정 바로가기 선택</span>
+                </div>
+                <button class="modal-close" onclick="closeScheduleModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- 전체 학사 일정 -->
+                <a href="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
+                   target="_blank" rel="noopener noreferrer" class="schedule-btn" onclick="closeScheduleModal()">
+                    <div class="schedule-btn-info">
+                        <i class="fa-solid fa-calendar-check c-calendar"></i>
+                        <div class="schedule-btn-text">
+                            <span class="schedule-btn-title">학교 전체 학사 일정</span>
+                            <span class="schedule-btn-sub">신백현중학교 노션 캘린더</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right" style="color: #64748b;"></i>
+                </a>
+
+                <!-- 개인별 일정 링크 -->
+                <a href="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
+                   target="_blank" rel="noopener noreferrer" class="schedule-btn" onclick="closeScheduleModal()">
+                    <div class="schedule-btn-info">
+                        <i class="fa-solid fa-user-clock" style="color: #60a5fa;"></i>
+                        <div class="schedule-btn-text">
+                            <span class="schedule-btn-title">개인별 일정 확인</span>
+                            <span class="schedule-btn-sub">개인 시간표 및 맞춤 업무 일정</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right" style="color: #64748b;"></i>
+                </a>
+            </div>
+        </div>
+    </div>
      
     <footer>
         <p>© 2026 신백현중학교 온라인 교무실 System</p>
     </footer>
 
+    <!-- 자바스크립트 스크립트 -->
+    <script>
+        // 오늘 날짜 계산하여 전광판 뱃지 표시
+        const today = new Date();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const date = String(today.getDate()).padStart(2, '0');
+        const badgeEl = document.getElementById('tickerDateBadge');
+        if (badgeEl) {
+            badgeEl.innerHTML = `<i class="fa-solid fa-bullhorn"></i> ${month}/${date}`;
+        }
+
+        // 팝업 제어 함수
+        function openScheduleModal() {
+            document.getElementById('scheduleModal').classList.add('active');
+        }
+
+        function closeScheduleModal() {
+            document.getElementById('scheduleModal').classList.remove('active');
+        }
+
+        function closeModalOnOverlay(event) {
+            if (event.target === document.getElementById('scheduleModal')) {
+                closeScheduleModal();
+            }
+        }
+    </script>
 </body>
 </html>
