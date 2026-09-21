@@ -75,97 +75,69 @@
             z-index: 1;
         }
 
-        /* 1. 상단 한 줄 전광판(Ticker) */
-        .ticker-card {
+        /* 3번 방식: 노션 캘린더 실시간 임베드 프레임 박스 */
+        .notion-embed-card {
             background: rgba(30, 41, 59, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(248, 113, 113, 0.35);
-            border-radius: 14px;
-            padding: 12px 16px;
+            border-radius: 16px;
+            padding: 14px;
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
             box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.4);
-            overflow: hidden;
         }
 
-        .ticker-badge {
+        .notion-embed-header {
             display: flex;
             align-items: center;
-            gap: 6px;
-            background: rgba(248, 113, 113, 0.15);
-            border: 1px solid rgba(248, 113, 113, 0.3);
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .notion-embed-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.92rem;
+            font-weight: 700;
             color: #fca5a5;
-            font-size: 0.8rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 8px;
-            white-space: nowrap;
-            flex-shrink: 0;
         }
 
-        .ticker-wrapper {
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-        }
-
-        .ticker-content {
-            display: inline-block;
-            white-space: nowrap;
-            padding-left: 100%;
-            animation: ticker 20s linear infinite;
-            font-size: 0.88rem;
-            color: #e2e8f0;
-        }
-
-        .ticker-card:hover .ticker-content {
-            animation-play-state: paused;
-        }
-
-        .ticker-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-right: 36px;
-        }
-
-        .ticker-item .time {
-            color: #f87171;
-            font-weight: 700;
-        }
-
-        @keyframes ticker {
-            0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(-100%, 0, 0); }
-        }
-
-        .ticker-link {
+        .notion-embed-link {
             color: #94a3b8;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 4px 8px;
+            padding: 3px 8px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 6px;
-            flex-shrink: 0;
             transition: all 0.2s ease;
-            white-space: nowrap;
         }
 
-        .ticker-link:hover {
+        .notion-embed-link:hover {
             background: rgba(248, 113, 113, 0.2);
             color: #ffffff;
         }
 
-        /* 2. 메인 2x2 그리드 카드 */
+        .notion-frame-wrapper {
+            width: 100%;
+            height: 280px; /* 높이 조절 가능 */
+            border-radius: 10px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .notion-frame-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* 메인 2x2 그리드 카드 */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -246,6 +218,7 @@
             .office-card { padding: 22px 12px; border-radius: 16px; }
             .icon-box { width: 48px; height: 48px; font-size: 22px; }
             .card-title { font-size: 14px; }
+            .notion-frame-wrapper { height: 240px; }
         }
     </style>
 </head>
@@ -259,26 +232,32 @@
     </header>
      
     <main>
-        <!-- 한 줄 전광판 -->
-        <div class="ticker-card">
-            <div class="ticker-badge" id="tickerDateBadge">
-                <i class="fa-solid fa-bullhorn"></i> TODAY
-            </div>
-            <div class="ticker-wrapper">
-                <div class="ticker-content" id="tickerContainer">
-                    <!-- 오늘의 학교 캘린더 일정 자바스크립트 자동 삽입 -->
+        <!-- 3번 방식: 노션 캘린더 실시간 임베드 박스 -->
+        <section class="notion-embed-card">
+            <div class="notion-embed-header">
+                <div class="notion-embed-title">
+                    <i class="fa-solid fa-calendar-days c-calendar"></i>
+                    <span>실시간 학교 캘린더</span>
                 </div>
+                <a href="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
+                   target="_blank" rel="noopener noreferrer" class="notion-embed-link">
+                    <span>전체화면</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
             </div>
-            <a href="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
-               target="_blank" rel="noopener noreferrer" class="ticker-link">
-                <span>캘린더</span>
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-            </a>
-        </div>
+
+            <!-- 노션 캘린더 프레임 -->
+            <div class="notion-frame-wrapper">
+                <iframe src="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
+                        loading="lazy" 
+                        title="신백현중학교 노션 캘린더">
+                </iframe>
+            </div>
+        </section>
 
         <!-- 2x2 메인 메뉴 그리드 -->
         <div class="grid-container">
-            <!-- 1. 오늘의 일정 (클릭 시 학교 노션 캘린더 바로가기) -->
+            <!-- 1. 오늘의 일정 (학교 노션 캘린더 바로가기) -->
             <a href="https://plausible-clave-a20.notion.site/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf&source=copy_link" 
                target="_blank" rel="noopener noreferrer" class="office-card">
                 <div class="icon-box c-calendar"><i class="fa-solid fa-calendar-days"></i></div>
@@ -312,50 +291,5 @@
         <p>© 2026 신백현중학교 온라인 교무실 System</p>
     </footer>
 
-    <!-- 학교 캘린더 전광판 자동화 자바스크립트 -->
-    <script>
-        // 학교 캘린더 주요 학사일정 데이터베이스 (YYYY-MM-DD)
-        const schoolCalendarEvents = {
-            "2026-09-21": [
-                { time: "08:40", text: "신백현중 아침 교직원 회의 (시청각실)" },
-                { time: "13:30", text: "2학기 1차 지필평가 출제 원안 제출 마감" },
-                { time: "종일", text: "학부모 공개수업 주간" }
-            ],
-            "2026-09-22": [
-                { time: "10:00", text: "교직원 평가 대비 연수" },
-                { time: "종일", text: "학부모 공개수업 주간 (2일차)" }
-            ]
-        };
-
-        function initCalendarTicker() {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const date = String(today.getDate()).padStart(2, '0');
-            const todayKey = `${year}-${month}-${date}`;
-
-            // 좌측 뱃지 날짜 자동 업데이트
-            const badgeEl = document.getElementById('tickerDateBadge');
-            if (badgeEl) {
-                badgeEl.innerHTML = `<i class="fa-solid fa-bullhorn"></i> ${month}/${date}`;
-            }
-
-            const container = document.getElementById('tickerContainer');
-            const events = schoolCalendarEvents[todayKey];
-
-            if (events && events.length > 0) {
-                container.innerHTML = events.map(item => 
-                    `<span class="ticker-item"><span class="time">[${item.time}]</span> ${item.text}</span>`
-                ).join('');
-            } else {
-                container.innerHTML = `
-                    <span class="ticker-item"><span class="time">[학교 캘린더]</span> 오늘 등록된 주요 학사일정이 없습니다.</span>
-                    <span class="ticker-item"><span class="time">[안내]</span> '오늘의 일정' 카드를 누르시면 전체 노션 캘린더로 연결됩니다.</span>
-                `;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', initCalendarTicker);
-    </script>
 </body>
 </html>
