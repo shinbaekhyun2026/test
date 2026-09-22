@@ -311,7 +311,8 @@
     </footer>
 
     <script>
-        const VERCEL_API_URL = "https://test1-eh7j.vercel.app/api/schedule";
+        // 변경된 Vercel API URL 적용
+        const VERCEL_API_URL = "https://test-eh7j.vercel.app/api/schedule";
 
         async function fetchNotionSchedule() {
             const container = document.getElementById('tickerContainer');
@@ -345,7 +346,6 @@
                 }
             } catch (error) {
                 console.warn("노션 일정 불러오기 지연/오류:", error);
-                // 연결 오류 시 차가운 에러 문구 대신 자연스러운 기본 문구 출력
                 showDefaultTicker(container);
             }
         }
