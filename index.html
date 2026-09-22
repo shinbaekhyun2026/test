@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>신백현중학교 온라인 교무실</title>
+    <!-- 파비콘 에러 방지용 기본 아이콘 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏫</text></svg>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -271,7 +273,6 @@
                     <span class="ticker-item"><span class="time">[안내]</span> 실시간 학사 일정을 불러오는 중입니다...</span>
                 </div>
             </div>
-            <!-- 전광판 '이동' 버튼 -->
             <a href="https://app.notion.com/p/3d8930617c3f80399197cea8e06b1a7b?v=3d8930617c3f80c58b03000cd06654bf" target="_blank" rel="noopener noreferrer" class="ticker-link">
                 <span>이동</span>
                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -311,7 +312,6 @@
     </footer>
 
     <script>
-        // 올바른 Vercel API 도메인 적용 (test1-eh7j)
         const VERCEL_API_URL = "https://test1-eh7j.vercel.app/api/schedule";
 
         async function fetchNotionSchedule() {
