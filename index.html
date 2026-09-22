@@ -13,13 +13,13 @@
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Noto Sans KR', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
-      
+        
         html, body {
             background-color: #0f172a !important;
             color: #ffffff;
             min-height: 100vh;
         }
-      
+        
         body {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             display: flex;
@@ -30,7 +30,7 @@
             padding: 20px 0;
             overflow-x: hidden;
         }
-      
+        
         .bg-overlay {
             position: absolute;
             top: 0;
@@ -41,7 +41,7 @@
             z-index: 0;
             pointer-events: none;
         }
-      
+        
         header {
             text-align: center;
             margin-top: 15px;
@@ -49,7 +49,7 @@
             z-index: 1;
             padding: 0 15px;
         }
-      
+        
         header h1 {
             font-size: 1.8rem;
             font-weight: 700;
@@ -61,13 +61,13 @@
             margin-bottom: 8px;
             word-break: keep-all;
         }
-      
+        
         header p {
             font-size: 0.88rem;
             color: #94a3b8;
             word-break: keep-all;
         }
-      
+        
         main {
             width: 100%;
             max-width: 600px;
@@ -173,7 +173,7 @@
             gap: 16px;
             justify-content: center;
         }
-      
+        
         .office-card {
             background-color: #1e293b;
             background: rgba(30, 41, 59, 0.8);
@@ -193,7 +193,7 @@
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
         }
-      
+        
         .office-card:hover {
             transform: translateY(-4px);
             background-color: #334155;
@@ -201,12 +201,12 @@
             border-color: rgba(96, 165, 250, 0.5);
             box-shadow: 0 15px 25px -8px rgba(59, 130, 246, 0.3);
         }
-      
+        
         .office-card:active {
             transform: scale(0.96);
             background-color: #334155;
         }
-      
+        
         .icon-box {
             width: 56px;
             height: 56px;
@@ -218,7 +218,7 @@
             background-color: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
-      
+        
         .card-title {
             font-size: 15px;
             font-weight: 600;
@@ -227,7 +227,7 @@
             line-height: 1.3;
             color: #ffffff;
         }
-      
+        
         .c-calendar { color: #f87171; }
         .c-treasure { color: #facc15; }
         .c-classroom { color: #2dd4bf; }
@@ -241,7 +241,7 @@
             color: #64748b;
             z-index: 1;
         }
-      
+        
         @media (max-width: 480px) {
             header h1 { font-size: 1.5rem; }
             .grid-container { gap: 12px; }
@@ -252,14 +252,14 @@
     </style>
 </head>
 <body>
-      
+        
     <div class="bg-overlay"></div>
-      
+        
     <header>
         <h1>🏫 신백현중학교 온라인 교무실</h1>
         <p>원하시는 업무 메뉴를 선택하시면 바로 연결됩니다.</p>
     </header>
-      
+        
     <main>
         <!-- 상단 실시간 자동 연동 전광판 -->
         <div class="ticker-card">
@@ -285,19 +285,19 @@
                 <div class="icon-box c-calendar"><i class="fa-solid fa-calendar-days"></i></div>
                 <span class="card-title">오늘의 일정<br>(노션 캘린더)</span>
             </a>
-      
+        
             <!-- 2. 보물창고 -->
             <a href="https://docs.google.com/spreadsheets/d/1Q6N_aM4Oy8IAHlOX8BEabyekh6Yho-xalQV8CbwfbkY/edit?gid=1872786866#gid=1872786866" target="_blank" rel="noopener noreferrer" class="office-card">
                 <div class="icon-box c-treasure"><i class="fa-solid fa-box-archive"></i></div>
                 <span class="card-title">보물창고</span>
             </a>
-      
+        
             <!-- 3. 구글 클래스룸 -->
             <a href="https://edu.google.com/intl/ALL_kr/workspace-for-education/products/classroom/" target="_blank" rel="noopener noreferrer" class="office-card">
                 <div class="icon-box c-classroom"><i class="fa-solid fa-chalkboard-user"></i></div>
                 <span class="card-title">구글 클래스룸</span>
             </a>
-      
+        
             <!-- 4. 컴시간 알리미 -->
             <a href="http://xn--s39aqy283b66bj2x.kr/" target="_blank" rel="noopener noreferrer" class="office-card">
                 <div class="icon-box c-comtime"><i class="fa-solid fa-clock"></i></div>
@@ -305,7 +305,7 @@
             </a>
         </div>
     </main>
-      
+        
     <footer>
         <p>© 2026 신백현중학교 온라인 교무실 System</p>
     </footer>
@@ -325,7 +325,6 @@
             }
 
             try {
-                console.log("Fetching schedule from:", VERCEL_API_URL);
                 const response = await fetch(VERCEL_API_URL);
 
                 if (!response.ok) {
@@ -333,9 +332,6 @@
                 }
 
                 const data = await response.json();
-                console.log("Vercel API 응답 데이터:", data);
-
-                // 응답 배열 추출 (data.schedules 또는 data 자체/data.data 고려)
                 const schedules = data.schedules || data.data || (Array.isArray(data) ? data : []);
 
                 if (Array.isArray(schedules) && schedules.length > 0) {
@@ -345,17 +341,20 @@
                         return `<span class="ticker-item"><span class="time">[${time}]</span> ${text}</span>`;
                     }).join('');
                 } else {
-                    container.innerHTML = `
-                        <span class="ticker-item"><span class="time">[학사일정]</span> 오늘 등록된 주요 학사일정이 없습니다.</span>
-                        <span class="ticker-item"><span class="time">[안내]</span> 카드를 누르면 전체 캘린더 페이지가 연동됩니다.</span>
-                    `;
+                    showDefaultTicker(container);
                 }
             } catch (error) {
-                console.error("노션 일정 불러오기 오류 상세:", error);
-                container.innerHTML = `
-                    <span class="ticker-item"><span class="time">[안내]</span> 일정을 불러오는 중 연결 오류가 발생했습니다. (개발자 도구 콘솔 확인)</span>
-                `;
+                console.warn("노션 일정 불러오기 지연/오류:", error);
+                // 연결 오류 시 차가운 에러 문구 대신 자연스러운 기본 문구 출력
+                showDefaultTicker(container);
             }
+        }
+
+        function showDefaultTicker(container) {
+            container.innerHTML = `
+                <span class="ticker-item"><span class="time">[학사일정]</span> 오늘 등록된 주요 학사일정이 없습니다.</span>
+                <span class="ticker-item"><span class="time">[안내]</span> 우측 '이동' 버튼을 누르면 전체 캘린더 페이지로 연결됩니다.</span>
+            `;
         }
 
         document.addEventListener('DOMContentLoaded', fetchNotionSchedule);
