@@ -17,16 +17,20 @@ module.exports = async (req, res) => {
 
   if (!NOTION_API_KEY) {
     return res.status(200).json({ 
-      schedules: [{ time: "오류", text: "NOTION_API_KEY가 없습니다." }] 
+      schedules: [{ time: "오류", text: "NOTION_API_KEY가 설정되지 않았습니다." }] 
     });
   }
 
   try {
-    // 한국 시간(KST) 기준 오늘 날짜 (YYYY-MM-DD)
+    // 한국 시간(KST) YYYY-MM-DD 추출
     const now = new Date();
-    const kstOffset = 9 * 60 * 60 * 1000;
-    const kstDate = new Date(now.getTime() + kstOffset);
-    const todayStr = kstDate.toISOString().split('T')[0];
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const kstDate = new Date(utc + (9 * 60 * 60 * 1000));
+    
+    const year = kstDate.getFullYear();
+    const month = String(kstDate.getMonth() + 1).padStart(2, '0');
+    const day = String(kstDate.getDate()).padStart(2, '0');
+    const todayStr = `${year}-${month}-${day}`; // 예: "2026-09-23"
 
     const response = await fetch(`https://api.notion.com/v1/databases/${NOTION_DATABASE_ID}/query`, {
       method: 'POST',
@@ -41,7 +45,7 @@ module.exports = async (req, res) => {
     if (!response.ok) {
       const errorText = await response.text();
       return res.status(200).json({ 
-        schedules: [{ time: `Notion 에러(${response.status})`, text: errorText }] 
+        schedules: [{ time: `Notion API 에러(${response.status})`, text: errorText }] 
       });
     }
 
@@ -53,15 +57,17 @@ module.exports = async (req, res) => {
     for (const page of results) {
       const props = page.properties;
       let titleText = "";
-      let dateStr = "";
+      let dateStart = "";
 
       for (const key in props) {
         const prop = props[key];
+        // 제목
         if (prop.type === 'title' && prop.title && prop.title.length > 0) {
           titleText = prop.title.map(t => t.plain_text).join('');
         }
+        // 날짜 (YYYY-MM-DD 만 추출)
         if (prop.type === 'date' && prop.date && prop.date.start) {
-          dateStr = prop.date.start;
+          dateStart = prop.date.start.substring(0, 10);
         }
       }
 
@@ -75,10 +81,10 @@ module.exports = async (req, res) => {
         }
       }
 
-      // 날짜가 오늘(todayStr)과 정확히 일치하거나 날짜 미지정인 경우만 추출
-      if (titleText && (dateStr === todayStr || !dateStr)) {
+      // 오직 오늘 날짜(todayStr)와 완벽히 일치하는 데이터만 담기
+      if (titleText && dateStart === todayStr) {
         schedules.push({
-          time: dateStr ? dateStr.substring(5).replace('-', '/') : "오늘",
+          time: `${month}/${day}`,
           text: titleText
         });
       }
@@ -86,7 +92,7 @@ module.exports = async (req, res) => {
 
     if (schedules.length === 0) {
       return res.status(200).json({
-        schedules: [{ time: "안내", text: "오늘 등록된 주요 학사일정이 없습니다." }]
+        schedules: [{ time: `${month}/${day}`, text: "오늘 등록된 주요 학사일정이 없습니다." }]
       });
     }
 
