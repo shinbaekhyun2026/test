@@ -13,12 +13,11 @@ module.exports = async (req, res) => {
   }
 
   const NOTION_API_KEY = process.env.NOTION_API_KEY;
-  // 신백현 오늘의 일정 DB ID 직접 지정
   const NOTION_DATABASE_ID = "3d8930617c3f8065b488000cf850929e";
 
   if (!NOTION_API_KEY) {
     return res.status(200).json({ 
-      schedules: [{ time: "오류", text: "NOTION_API_KEY가 존재하지 않습니다." }] 
+      schedules: [{ time: "오류", text: "NOTION_API_KEY가 없습니다." }] 
     });
   }
 
@@ -43,12 +42,6 @@ module.exports = async (req, res) => {
     const data = await response.json();
     const results = data.results || [];
 
-    if (results.length === 0) {
-      return res.status(200).json({
-        schedules: [{ time: "안내", text: "오늘 등록된 일정이 없습니다." }]
-      });
-    }
-
     const schedules = [];
 
     for (const page of results) {
@@ -58,14 +51,17 @@ module.exports = async (req, res) => {
 
       for (const key in props) {
         const prop = props[key];
+        // 제목 가져오기
         if (prop.type === 'title' && prop.title && prop.title.length > 0) {
           titleText = prop.title.map(t => t.plain_text).join('');
         }
+        // 날짜 가져오기
         if (prop.type === 'date' && prop.date && prop.date.start) {
           dateStr = prop.date.start;
         }
       }
 
+      // 제목이 없으면 rich_text 탐색
       if (!titleText) {
         for (const key in props) {
           const prop = props[key];
@@ -78,10 +74,16 @@ module.exports = async (req, res) => {
 
       if (titleText) {
         schedules.push({
-          time: dateStr || "오늘의 일정",
+          time: dateStr ? dateStr.substring(5).replace('-', '/') : "오늘",
           text: titleText
         });
       }
+    }
+
+    if (schedules.length === 0) {
+      return res.status(200).json({
+        schedules: [{ time: "안내", text: "오늘 등록된 주요 학사일정이 없습니다." }]
+      });
     }
 
     return res.status(200).json({ schedules });
