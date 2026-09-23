@@ -13,12 +13,12 @@ module.exports = async (req, res) => {
   }
 
   const NOTION_API_KEY = process.env.NOTION_API_KEY;
-  // 환경변수가 없거나 옛날 값이 넘어오더라도, 새 '신백현 오늘의 일정' DB ID를 우선 사용하도록 설정
+  // 신백현 오늘의 일정 DB ID 고정 설정
   const NOTION_DATABASE_ID = "3d8930617c3f8065b488000cf850929e";
 
   if (!NOTION_API_KEY) {
     return res.status(200).json({ 
-      schedules: [{ time: "오류", text: "NOTION_API_KEY 환경변수가 설정되지 않았습니다." }] 
+      schedules: [{ time: "오류", text: "NOTION_API_KEY가 없습니다." }] 
     });
   }
 
@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
     if (!response.ok) {
       const errorText = await response.text();
       return res.status(200).json({ 
-        schedules: [{ time: `Notion API 에러(${response.status})`, text: errorText }] 
+        schedules: [{ time: `Notion 에러(${response.status})`, text: errorText }] 
       });
     }
 
@@ -45,7 +45,7 @@ module.exports = async (req, res) => {
 
     if (results.length === 0) {
       return res.status(200).json({
-        schedules: [{ time: "안내", text: "등록된 일정이 없습니다." }]
+        schedules: [{ time: "안내", text: "오늘 등록된 일정이 없습니다." }]
       });
     }
 
@@ -87,7 +87,7 @@ module.exports = async (req, res) => {
     return res.status(200).json({ schedules });
   } catch (error) {
     return res.status(200).json({ 
-      schedules: [{ time: "서버 오류", text: error.message }] 
+      schedules: [{ time: "서버 에러", text: error.message }] 
     });
   }
 };
