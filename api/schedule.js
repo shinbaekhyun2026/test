@@ -1,4 +1,3 @@
-// update env
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,12 +13,12 @@ module.exports = async (req, res) => {
   }
 
   const NOTION_API_KEY = process.env.NOTION_API_KEY;
-  const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
+  // 환경변수가 없거나 옛날 값이 넘어오더라도, 새 '신백현 오늘의 일정' DB ID를 우선 사용하도록 설정
+  const NOTION_DATABASE_ID = "3d8930617c3f8065b488000cf850929e";
 
-  // 진단용 환경변수 체크
-  if (!NOTION_API_KEY || !NOTION_DATABASE_ID) {
+  if (!NOTION_API_KEY) {
     return res.status(200).json({ 
-      schedules: [{ time: "오류 발생", text: `환경변수 미설정 (KEY: ${!!NOTION_API_KEY}, DB_ID: ${!!NOTION_DATABASE_ID})` }] 
+      schedules: [{ time: "오류", text: "NOTION_API_KEY 환경변수가 설정되지 않았습니다." }] 
     });
   }
 
@@ -46,7 +45,7 @@ module.exports = async (req, res) => {
 
     if (results.length === 0) {
       return res.status(200).json({
-        schedules: [{ time: "안내", text: "DB에서 조회된 데이터(행)가 0건입니다." }]
+        schedules: [{ time: "안내", text: "등록된 일정이 없습니다." }]
       });
     }
 
@@ -79,16 +78,10 @@ module.exports = async (req, res) => {
 
       if (titleText) {
         schedules.push({
-          time: dateStr || "일정",
+          time: dateStr || "오늘의 일정",
           text: titleText
         });
       }
-    }
-
-    if (schedules.length === 0) {
-      return res.status(200).json({
-        schedules: [{ time: "안내", text: "데이터는 있으나 제목(Text) 추출에 실패했습니다." }]
-      });
     }
 
     return res.status(200).json({ schedules });
