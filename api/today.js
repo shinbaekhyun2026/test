@@ -17,11 +17,17 @@ module.exports = async (req, res) => {
 
   if (!NOTION_API_KEY) {
     return res.status(200).json({ 
-      schedules: [{ time: "오류", text: "NOTION_API_KEY 환경변수가 설정되지 않았습니다." }] 
+      schedules: [{ time: "오류", text: "NOTION_API_KEY가 없습니다." }] 
     });
   }
 
   try {
+    // 한국 시간(KST) 기준 오늘 날짜 (YYYY-MM-DD)
+    const now = new Date();
+    const kstOffset = 9 * 60 * 60 * 1000;
+    const kstDate = new Date(now.getTime() + kstOffset);
+    const todayStr = kstDate.toISOString().split('T')[0];
+
     const response = await fetch(`https://api.notion.com/v1/databases/${NOTION_DATABASE_ID}/query`, {
       method: 'POST',
       headers: {
@@ -35,7 +41,7 @@ module.exports = async (req, res) => {
     if (!response.ok) {
       const errorText = await response.text();
       return res.status(200).json({ 
-        schedules: [{ time: `Notion API 에러(${response.status})`, text: errorText }] 
+        schedules: [{ time: `Notion 에러(${response.status})`, text: errorText }] 
       });
     }
 
@@ -51,17 +57,14 @@ module.exports = async (req, res) => {
 
       for (const key in props) {
         const prop = props[key];
-        // 제목 가져오기
         if (prop.type === 'title' && prop.title && prop.title.length > 0) {
           titleText = prop.title.map(t => t.plain_text).join('');
         }
-        // 날짜 가져오기
         if (prop.type === 'date' && prop.date && prop.date.start) {
           dateStr = prop.date.start;
         }
       }
 
-      // 제목이 없으면 rich_text 탐색
       if (!titleText) {
         for (const key in props) {
           const prop = props[key];
@@ -72,7 +75,8 @@ module.exports = async (req, res) => {
         }
       }
 
-      if (titleText) {
+      // 날짜가 오늘(todayStr)과 정확히 일치하거나 날짜 미지정인 경우만 추출
+      if (titleText && (dateStr === todayStr || !dateStr)) {
         schedules.push({
           time: dateStr ? dateStr.substring(5).replace('-', '/') : "오늘",
           text: titleText
