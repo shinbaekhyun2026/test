@@ -1,5 +1,4 @@
 module.exports = async (req, res) => {
-  // CORS 헤더 설정
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -16,10 +15,10 @@ module.exports = async (req, res) => {
   const NOTION_API_KEY = process.env.NOTION_API_KEY;
   const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
+  // 진단용 환경변수 체크
   if (!NOTION_API_KEY || !NOTION_DATABASE_ID) {
     return res.status(200).json({ 
-      schedules: [], 
-      message: "환경변수(NOTION_API_KEY 또는 NOTION_DATABASE_ID)가 설정되지 않았습니다." 
+      schedules: [{ time: "오류 발생", text: `환경변수 미설정 (KEY: ${!!NOTION_API_KEY}, DB_ID: ${!!NOTION_DATABASE_ID})` }] 
     });
   }
 
@@ -36,18 +35,19 @@ module.exports = async (req, res) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Notion API Error:", errorText);
-      return res.status(200).json({ schedules: [], error: errorText });
+      return res.status(200).json({ 
+        schedules: [{ time: `Notion API 에러(${response.status})`, text: errorText }] 
+      });
     }
 
     const data = await response.json();
     const results = data.results || [];
 
-    // 오늘 날짜 구하기 (YYYY-MM-DD)
-    const now = new Date();
-    const kstOffset = 9 * 60; // KST는 UTC+9
-    const localTime = new Date(now.getTime() + (now.getTimezoneOffset() + kstOffset) * 60000);
-    const todayStr = localTime.toISOString().split('T')[0];
+    if (results.length === 0) {
+      return res.status(200).json({
+        schedules: [{ time: "안내", text: "DB에서 조회된 데이터(행)가 0건입니다." }]
+      });
+    }
 
     const schedules = [];
 
@@ -56,22 +56,16 @@ module.exports = async (req, res) => {
       let titleText = "";
       let dateStr = "";
 
-      // 모든 속성을 순회하며 제목(title)과 날짜(date) 자동 추출
       for (const key in props) {
         const prop = props[key];
-
-        // Title(제목) 속성 추출
         if (prop.type === 'title' && prop.title && prop.title.length > 0) {
           titleText = prop.title.map(t => t.plain_text).join('');
         }
-
-        // Date(날짜) 속성 추출
         if (prop.type === 'date' && prop.date && prop.date.start) {
           dateStr = prop.date.start;
         }
       }
 
-      // 만약 Title 타입을 찾지 못했다면 rich_text 속성에서 추출 시도
       if (!titleText) {
         for (const key in props) {
           const prop = props[key];
@@ -82,20 +76,24 @@ module.exports = async (req, res) => {
         }
       }
 
-      // 제목이 존재하는 경우 리스트에 추가
       if (titleText) {
-        // 날짜 필드가 비어있거나 오늘 날짜와 일치하거나, 전체 항목을 표시
         schedules.push({
-          time: dateStr || "오늘의 일정",
-          text: titleText,
-          date: dateStr
+          time: dateStr || "일정",
+          text: titleText
         });
       }
     }
 
+    if (schedules.length === 0) {
+      return res.status(200).json({
+        schedules: [{ time: "안내", text: "데이터는 있으나 제목(Text) 추출에 실패했습니다." }]
+      });
+    }
+
     return res.status(200).json({ schedules });
   } catch (error) {
-    console.error("Server Error:", error);
-    return res.status(200).json({ schedules: [], error: error.message });
+    return res.status(200).json({ 
+      schedules: [{ time: "서버 오류", text: error.message }] 
+    });
   }
 };
