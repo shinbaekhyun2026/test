@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
   }
 
   const NOTION_API_KEY = process.env.NOTION_API_KEY;
-  const NOTION_DATABASE_ID = "3d8930617c3f8065b488000cf850929e";
+  const NOTION_DATABASE_ID = "3d8930617c3f80399197cea8e06b1a7b";
 
   if (!NOTION_API_KEY) {
     return res.status(200).json({ 
